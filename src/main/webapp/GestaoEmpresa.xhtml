@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Gestão de Empresas</title>
+</h:head>
+
+<h:body>
+
+	<f:metadata>
+		<f:viewAction action="#{empresaBean.findAllEmpresas()}"/>
+	</f:metadata>
+	
+	<p:dataTable value="#{empresaBean.empresas}" var="empresa"
+		 emptyMessage="Nenhuma empresa encontrada">
+		 <p:column headerText="Razão social">
+		 	<h:outputText value="#{empresa.razaoSocial}" />
+		 </p:column>
+		 <p:column headerText="Nome fantasia" width="250">
+		 	<h:outputText value="#{empresa.nomeFantasia}" />
+		 </p:column>
+		 <p:column headerText="CNPJ" width="140">
+		 	<h:outputText value="#{empresa.cnpj}" />
+		 </p:column>
+	</p:dataTable> 
+</h:body>
+</html>
