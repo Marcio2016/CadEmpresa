@@ -39,6 +39,14 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/all-themes -->
+		<dependency>
+			<groupId>org.primefaces.extensions</groupId>
+			<artifactId>all-themes</artifactId>
+			<version>1.0.8</version>
+		</dependency>
+
+
 		<!-- Injeção de Dependência Weld -->
 		<dependency>
 			<groupId>org.jboss.weld.servlet</groupId>
@@ -47,6 +55,7 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- Dependencia do bean validation -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -72,6 +81,14 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.33</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- Dependência para exportação do xls -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.10.1</version>
 			<scope>compile</scope>
 		</dependency>
 

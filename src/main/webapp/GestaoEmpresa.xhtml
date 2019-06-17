@@ -13,39 +13,94 @@
 
 		<h1>Cadastro de Empresas</h1>
 		<h:form id="frm">
-			<p:toolbar>
+		
+			<p:messages id="msg"/>
+			
+			<p:toolbar id="menu">
 				<f:facet name="left">
+					
 					<p:commandButton value="Nova" icon="ui-icon-document"
-						action="#{empresaBean.preparaNovoCadastro()}"
+						action="#{empresaBean.preparaNovoCadastro}"
 						process="@this" update="empresa-modal"
-						oncomplete="PF('edicaoEmpresaDialog').show()" />
+						oncomplete="PF('edicaoEmpresaDialog').show()">
+						
+						<p:resetInput target="empresa-modal"/>
+					
+					</p:commandButton>	
 				</f:facet>
+				
 				<f:facet name="right">
-					<p:commandButton icon="ui-icon-pencil" title="Editar" />
-					<p:commandButton icon="ui-icon-trash" title="Excluir" />
+					
+					<p:commandButton icon="ui-icon-pencil" title="Editar"
+						process="@this" update="empresa-modal"
+						oncomplete="PF('edicaoEmpresaDialog').show()"
+						disabled="#{empresaBean.empresaSelecionada == null}">
+						
+						<p:resetInput target="empresa-modal"/>
+						
+						<!-- Atribuindo de empresaSelecionada para empresaEdicao -->
+						<f:setPropertyActionListener value="#{empresaBean.empresaSelecionada}"
+							 target="#{empresaBean.empresaEdicao}" />
+						
+					</p:commandButton>
+					
+					<p:commandButton icon="ui-icon-trash" title="Excluir"
+						disabled="#{empresaBean.empresaSelecionada == null}"
+						process="@this" update="empresaTable msg menu"
+						action="#{empresaBean.excluir()}" >
+						
+						<p:confirm icon="ui-icon-alert" header="Confirmação de exclusão" 
+							message="Tem certeza que deseja excluir esta empresa ?"/>						
+								
+					</p:commandButton>
+					
 					<p:commandButton icon="ui-icon-arrowthick-1-s"
-						title="Exporta para XLS" />
+						title="Exporta para XLS" ajax="false"
+						immediate="true">
+						
+						<!-- Exportando tabela de empreas para xls -->
+							<p:dataExporter type="xls" target="empresaTable"
+								fileName="empresas"/>
+						
+					</p:commandButton>
+				
 				</f:facet>
 			</p:toolbar>
 
 			<p:dataTable value="#{empresaBean.empresas}" var="empresa"
 				emptyMessage="Nenhuma empresa encontrada" paginator="true" row="10"
-				paginatorPosition="bottom" style="margin-top: 10px" id="empresaTable">
+				paginatorPosition="bottom" style="margin-top: 10px" id="empresaTable"
+				selection="#{empresaBean.empresaSelecionada}" selectionMode="single"
+				rowKey="#{empresa.id}">
+				
+				<p:ajax event="rowSelect" update=":frm:menu"/>
+				<p:ajax event="rowUnselect" update=":frm:menu"/>
+				
 				<p:column headerText="Razão social" sortBy="#{empresa.razaoSocial}">
 					<h:outputText value="#{empresa.razaoSocial}" />
 				</p:column>
+				
 				<p:column headerText="Nome fantasia" width="250">
 					<h:outputText value="#{empresa.nomeFantasia}" />
 				</p:column>
+				
 				<p:column headerText="CNPJ" width="140">
 					<h:outputText value="#{empresa.cnpj}" />
 				</p:column>
+			
 			</p:dataTable>
 
 			<p:dialog header="Cadastrar empresa" widgetVar="edicaoEmpresaDialog"
 				id="empresa-modal" resizable="false" modal="true"
 				closeOnEscape="true">
-				<h:panelGrid columns="2">
+				
+				<p:messages id="msg-modal"/>
+
+				<!--Selecionando o botão salvar do dialog como padrão -->
+				<p:defaultCommand target="salva" scope="empresa-modal"/>
+				
+				<h:panelGrid columns="2" id="painel-modal">
+					
 					<p:outputLabel value="Nome Fantasia:" for="nome-fantasia" />
 					<p:inputText id="nome-fantasia" size="60" maxlength="80"
 						value="#{empresaBean.empresaEdicao.nomeFantasia}" />
@@ -55,14 +110,14 @@
 						value="#{empresaBean.empresaEdicao.razaoSocial}" />
 
 					<p:outputLabel value="CNPJ:" for="cnpj" />
-					<p:inputText id="cnpj" size="18" maxlength="18"
-						value="#{empresaBean.empresaEdicao.cnpj}" />
+					<p:inputMask id="cnpj" size="18" maxlength="18"
+						value="#{empresaBean.empresaEdicao.cnpj}"
+						mask="99.999.999/9999-99"/>
 
 					<p:outputLabel value="Data de Fundação:" for="data-fundacao" />
-					<p:inputText id="data-fundacao" size="10" maxlength="10" 
-						value="#{empresaBean.empresaEdicao.dataFundacao}">
-						<f:convertDateTime pattern="dd/MM/yyyy" />
-					</p:inputText>
+					<p:calendar id="data-fundacao" size="10" pattern="dd/MM/yyyy"
+					 	mask="99/99/9999" value="#{empresaBean.empresaEdicao.dataFundacao}"/>						
+					
 					
 					<p:outputLabel value="Tipo:" for="tipo" />
 					<p:selectOneMenu id="tipo" value="#{empresaBean.empresaEdicao.tipo}">
@@ -73,8 +128,9 @@
 
 					<p:outputLabel />
 					<p:commandButton value="Salvar" id="salva"
-						action="#{empresaBean.salvar()}" process="empresaTable"
-						update="empresa-modal"	oncomplete="PF('edicaoEmpresaDialog').hide()" />
+						action="#{empresaBean.salvar}" process="empresa-modal"
+						update="msg-modal painel-modal"
+						oncomplete="if (!args.validationFailed) PF('edicaoEmpresaDialog').hide()" />
 				</h:panelGrid>
 
 			</p:dialog>
